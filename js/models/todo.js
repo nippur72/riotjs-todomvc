@@ -1,76 +1,72 @@
 'use strict';
-
-function Todo() {
-    var self = riot.observable(this),
-        db = DB('riot-todo'),
-        items = db.get();
-
-    self.add = function(name, done) {
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Todo = (function (_super) {
+    __extends(Todo, _super);
+    function Todo() {
+        _super.call(this);
+        this.db = DB('riot-todo');
+        this.items = this.db.get();
+        // sync database
+        this.on('add remove toggle edit', function () {
+            this.db.put(this.items);
+        });
+    }
+    Todo.prototype.add = function (name, done) {
         var item = {
-          id: generateId(), name: name, done: done
+            id: this.generateId(), name: name, done: done
         };
-
-        items[item.id] = item;
-        self.trigger('add', item);
+        this.items[item.id] = item;
+        this.trigger('add', item);
     };
-
-    self.edit = function(item) {
+    Todo.prototype.edit = function (item) {
         if (!item.name) {
-          return self.remove(item.id);
+            return this.remove(item.id);
         }
-
-        items[item.id] = item;
-        self.trigger('edit', item);
+        this.items[item.id] = item;
+        this.trigger('edit', item);
     };
-
-    self.remove = function(filter) {
-        var removedItems = self.items(filter).map(function(item) {
-            delete items[item.id];
+    Todo.prototype.remove = function (filter) {
+        var removedItems = this.items(filter).map(function (item) {
+            delete this.items[item.id];
             return item;
         });
-        self.trigger('remove', removedItems);
+        this.trigger('remove', removedItems);
     };
-
-    self.toggle = function(id) {
-        items[id].done = !items[id].done;
-        self.trigger('toggle', items[id]);
+    Todo.prototype.toggle = function (id) {
+        this.items[id].done = !this.items[id].done;
+        this.trigger('toggle', this.items[id]);
     };
-
-    self.toggleAll = function() {
-        var filter = self.isDone() ? 'completed' : 'active';
-        self.items(filter).forEach(function(item) {
-          self.toggle(item.id);
+    Todo.prototype.toggleAll = function () {
+        var filter = this.isDone() ? 'completed' : 'active';
+        this.items(filter).forEach(function (item) {
+            this.toggle(item.id);
         });
     };
-
     // @param filter: <empty>, id, 'active', 'completed'
-    self.items = function(filter) {
-        return Object.keys(items).filter(function(id) {
-            return matchFilter(items[id], filter);
-        }).map(function(id) {
-            return items[id];
+    Todo.prototype._items = function (filter) {
+        return Object.keys(this.items).filter(function (id) {
+            return this.matchFilter(this.items[id], filter);
+        }).map(function (id) {
+            return this.items[id];
         });
     };
-
-    self.isDone = function(){
-        return self.items('active').length == 0;
+    Todo.prototype.isDone = function () {
+        return this.items('active').length == 0;
     };
-
-    // sync database
-    self.on('add remove toggle edit', function() {
-        db.put(items);
-    });
-
     // Private methods
-    function generateId() {
-        var keys = Object.keys(items), i = keys.length;
-        return (i ? items[keys[i - 1]].id + 1 : i + 1);
-    }
-
-
-    function matchFilter(item, filter) {
+    Todo.prototype.generateId = function () {
+        var keys = Object.keys(this.items), i = keys.length;
+        return (i ? this.items[keys[i - 1]].id + 1 : i + 1);
+    };
+    Todo.prototype.matchFilter = function (item, filter) {
         return !filter ||
             filter.toString() === item.id.toString() ||
             filter === (item.done ? 'completed' : 'active');
-    }
-};
+    };
+    return Todo;
+})(Riot.Observable);
+//# sourceMappingURL=todo.js.map

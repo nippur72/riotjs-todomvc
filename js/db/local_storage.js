@@ -1,15 +1,14 @@
 "use strict";
-
 function DB(key) {
-  var store = window.localStorage;
-
-  return {
-    get: function() {
-      return JSON.parse(store[key] || '{}')
-    },
-
-    put: function(data) {
-      store[key] = JSON.stringify(data)
-    }
-  };
-};
+    var store = window.localStorage;
+    return {
+        get: function () {
+            return JSON.parse(store[key] || '{}');
+        },
+        put: function (data) {
+            store[key] = JSON.stringify(data);
+        }
+    };
+}
+;
+//# sourceMappingURL=local_storage.js.map

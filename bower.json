@@ -8,6 +8,6 @@
   "dependencies": {
     "todomvc-common": "~0.1.9",
     "jquery": "~2.1.1",
-    "riotjs": "~1.0.1"
+    "riot-ts": "nippur72/riotts#~0.0.6"
   }
 }

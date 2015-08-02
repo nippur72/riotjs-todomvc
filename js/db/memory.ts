@@ -8,5 +8,4 @@ function DB() {
     put: function(data) { store = data; }
   };
 };
-*/ 
-//# sourceMappingURL=memory.js.map
+*/
