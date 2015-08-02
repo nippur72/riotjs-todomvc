@@ -1,2 +1,9 @@
 /bower_components/riotjs/lib
 /bower_components/jquery/src
+/bin
+/obj
+/.vs
+web.config
+web.Debug.config
+web.Release.config
+
