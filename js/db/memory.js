@@ -1,5 +1,5 @@
 "use strict";
-
+/*
 function DB() {
   var store = {};
 
@@ -8,3 +8,5 @@ function DB() {
     put: function(data) { store = data; }
   };
 };
+*/ 
+//# sourceMappingURL=memory.js.map
