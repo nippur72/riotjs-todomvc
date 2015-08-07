@@ -3,21 +3,14 @@
 
 'use strict';
 
-(function ($) {
-    var todo = new Todo();
-    routes({todo: todo});
+riot.settings.brackets = "{{ }}";
 
-    // Binds the Todo Presenter
-    todoPresenter($("#todoapp"), {
-        model: todo,
-        template: $('#task-template').html(),
-    });
-
-    // Binds the Footer Presenter
-    var el = FooterPresenter.createElement({model: todo});
-    var root = document.getElementById("footer");
-    root.appendChild(el);
-    
-})(jQuery);
+TodoItem.register();
+TodoFooter.register();
+TodoApp.register();
 
 riot.mount("*");
+riot.route.start();
+riot.route("#/");     
+
+

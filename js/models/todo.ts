@@ -1,23 +1,38 @@
-'use strict';
-
-class Todo extends Riot.Observable 
+class Task
 {
+   id: number;
+   name: string;
+   done: boolean;
+}
+    
+class TodoStore extends Riot.Observable 
+{
+    private static _instance:TodoStore = new TodoStore();
+
+    static get instance() { return TodoStore._instance; };
+
     db = DB('riot-todo');
-    items = this.db.get();
+    items: Array<Task> = this.db.get();
 
     constructor()
     {
        super();       
 
+       if(TodoStore._instance!=null) throw "do not use new, use .instance";
+
        // sync database
-       this.on('add remove toggle edit', function() {
+       this.on('add remove toggle edit', ()=> {
            this.db.put(this.items);
        });
     }
 
-    add(name, done) {
-        var item = {
-          id: this.generateId(), name: name, done: done
+    on(a,b){ return "k"; }    
+
+    add(name, done?) {
+        var item: Task = {
+          id:   this.generateId(), 
+          name: name, 
+          done: done===undefined?false:done
         };
 
         this.items[item.id] = item;
@@ -34,7 +49,8 @@ class Todo extends Riot.Observable
     }
 
     remove(filter) {
-        var removedItems = this.items(filter).map(function(item) {
+        var removedItems = this.getItems(filter).map((item)=> 
+        {
             delete this.items[item.id];
             return item;
         });
@@ -48,22 +64,23 @@ class Todo extends Riot.Observable
 
     toggleAll() {
         var filter = this.isDone() ? 'completed' : 'active';
-        this.items(filter).forEach(function(item) {
-          this.toggle(item.id);
+        this.getItems(filter).forEach((item)=> 
+        {
+           this.toggle(item.id);
         });
     }
 
     // @param filter: <empty>, id, 'active', 'completed'
-    _items(filter) {
-        return Object.keys(this.items).filter(function(id) {
+    getItems(filter) {
+       return Object.keys(this.items).filter((id)=> {
             return this.matchFilter(this.items[id], filter);
-        }).map(function(id) {
+        }).map((id)=> {
             return this.items[id];
         });
     }
 
     isDone() {
-        return this.items('active').length == 0;
+        return this.getItems('active').length == 0;
     }
 
     // Private methods

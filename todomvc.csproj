@@ -27,9 +27,12 @@
     <TypeScriptCompile Include="js\db\local_storage.ts" />
     <TypeScriptCompile Include="js\db\memory.ts" />
     <TypeScriptCompile Include="js\models\todo.ts" />
-    <TypeScriptCompile Include="js\presenters\footer_presenter.ts" />
-    <TypeScriptCompile Include="js\presenters\todo_presenter.ts" />
-    <TypeScriptCompile Include="js\routes.ts" />
+    <Content Include="js\tags\todo-app.html" />
+    <Content Include="js\tags\todo-footer.html" />
+    <TypeScriptCompile Include="js\tags\todo-footer.ts" />
+    <Content Include="js\tags\todo-item.html" />
+    <TypeScriptCompile Include="js\tags\todo-item.ts" />
+    <TypeScriptCompile Include="js\tags\todo-app.ts" />
     <Content Include="test\index.html" />
     <Content Include="test\models\todo_test.js" />
     <Content Include="test\presenters\footer_presenter_test.js" />
