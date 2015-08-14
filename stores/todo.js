@@ -3,17 +3,18 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+var NO_EDITING = -1;
 var TodoStore = (function (_super) {
     __extends(TodoStore, _super);
     function TodoStore() {
         var _this = this;
         _super.call(this);
         this._data = {
-            items: [],
+            items: {},
             filter: "",
-            editing_id: 0
+            editing_id: NO_EDITING
         };
-        this.db = DB('riot-todo');
+        this.db = new DB('riot-todo');
         // connects action to resolvers 
         this.on("initDb", function () { return _this._initDb(); });
         this.on("setFilter", function (filter) { return _this._setFilter(filter); });
@@ -27,7 +28,7 @@ var TodoStore = (function (_super) {
         this.on("toggleAll", function () { return _this._toggleAll(); });
         // sync database
         this.on("update", function () {
-            _this.db.put(_this._data.items);
+            _this.db.write(_this._data.items);
         });
     }
     Object.defineProperty(TodoStore.prototype, "data", {
@@ -73,7 +74,7 @@ var TodoStore = (function (_super) {
     };
     // =================== resolvers ===================
     TodoStore.prototype._initDb = function () {
-        this._data.items = this.db.get();
+        this._data.items = this.db.read() || {};
         this.update();
     };
     TodoStore.prototype._setFilter = function (filter) {
@@ -101,11 +102,11 @@ var TodoStore = (function (_super) {
         else {
             this._data.items[item.id] = item;
         }
-        this._data.editing_id = 0;
+        this._data.editing_id = NO_EDITING;
         this.update();
     };
     TodoStore.prototype._cancelEditItem = function () {
-        this._data.editing_id = 0;
+        this._data.editing_id = NO_EDITING;
         this.update();
     };
     TodoStore.prototype._removeItem = function (item) {

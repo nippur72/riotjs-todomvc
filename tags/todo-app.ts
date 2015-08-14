@@ -1,4 +1,4 @@
-@template("js/tags/todo-app.html")
+@template("tags/todo-app.html")
 
 class TodoApp extends Riot.Element
 {   
@@ -7,6 +7,8 @@ class TodoApp extends Riot.Element
    constructor(options)
    {        
       super();
+
+      store.initDb();
 
       riot.route((hash,filter)=> 
       {                  
@@ -17,7 +19,7 @@ class TodoApp extends Riot.Element
       {
          this.items = store.getItems(store.data.filter);          
          this.update();
-      });
+      });      
    }
     
    handleKeyup(e)

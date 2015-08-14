@@ -4,14 +4,16 @@ interface Task
    name: string;
    done: boolean;
 }
+
+const NO_EDITING = -1;
     
 class TodoStore extends Riot.Observable 
 {    
    private _data =
    {
-      items: [],
+      items: { },
       filter: "", 
-      editing_id: 0     
+      editing_id: NO_EDITING     
    }
    
    public get data() 
@@ -19,7 +21,7 @@ class TodoStore extends Riot.Observable
       return this._data; 
    }
 
-   private db = DB('riot-todo');   
+   private db = new DB('riot-todo');   
 
    constructor()
    {
@@ -40,7 +42,7 @@ class TodoStore extends Riot.Observable
       // sync database
       this.on("update", ()=> 
       {
-         this.db.put(this._data.items);
+         this.db.write(this._data.items);
       });
    }  
 
@@ -104,7 +106,7 @@ class TodoStore extends Riot.Observable
 
    private _initDb()
    {
-      this._data.items = this.db.get();
+      this._data.items = this.db.read() || {};      
       this.update();
    }
 
@@ -144,13 +146,13 @@ class TodoStore extends Riot.Observable
       {
          this._data.items[item.id] = item;
       }
-      this._data.editing_id = 0;
+      this._data.editing_id = NO_EDITING;
       this.update();
    }
 
    private _cancelEditItem() 
    {
-      this._data.editing_id = 0;
+      this._data.editing_id = NO_EDITING;
       this.update();
    }
 

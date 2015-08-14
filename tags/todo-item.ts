@@ -1,7 +1,7 @@
 const ENTER_KEY = 13;
 const ESC_KEY = 27;
 
-@template("js/tags/todo-item.html")
+@template("tags/todo-item.html")
 
 class TodoItem extends Riot.Element
 {  

@@ -53,7 +53,7 @@ var TodoItem = (function (_super) {
         store.toggleItem(this.item.id);
     };
     TodoItem = __decorate([
-        template("js/tags/todo-item.html")
+        template("tags/todo-item.html")
     ], TodoItem);
     return TodoItem;
 })(Riot.Element);

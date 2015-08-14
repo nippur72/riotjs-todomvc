@@ -23,16 +23,15 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="index.html" />
-    <TypeScriptCompile Include="js\app.ts" />
-    <TypeScriptCompile Include="js\db\local_storage.ts" />
-    <TypeScriptCompile Include="js\db\memory.ts" />
-    <TypeScriptCompile Include="js\models\todo.ts" />
-    <Content Include="js\tags\todo-app.html" />
-    <Content Include="js\tags\todo-footer.html" />
-    <TypeScriptCompile Include="js\tags\todo-footer.ts" />
-    <Content Include="js\tags\todo-item.html" />
-    <TypeScriptCompile Include="js\tags\todo-item.ts" />
-    <TypeScriptCompile Include="js\tags\todo-app.ts" />
+    <TypeScriptCompile Include="app.ts" />
+    <TypeScriptCompile Include="db\local_storage.ts" />
+    <TypeScriptCompile Include="stores\todo.ts" />
+    <Content Include="tags\todo-app.html" />
+    <Content Include="tags\todo-footer.html" />
+    <TypeScriptCompile Include="tags\todo-footer.ts" />
+    <Content Include="tags\todo-item.html" />
+    <TypeScriptCompile Include="tags\todo-item.ts" />
+    <TypeScriptCompile Include="tags\todo-app.ts" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="README.md" />

@@ -1,5 +1,5 @@
 
-@template("js/tags/todo-footer.html")
+@template("tags/todo-footer.html")
 
 class TodoFooter extends Riot.Element
 {

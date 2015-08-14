@@ -11,36 +11,27 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
         case 4: return decorators.reduceRight(function(o, d) { return (d && d(target, key, o)) || o; }, desc);
     }
 };
-var TodoApp = (function (_super) {
-    __extends(TodoApp, _super);
-    function TodoApp(options) {
+var TodoFooter = (function (_super) {
+    __extends(TodoFooter, _super);
+    function TodoFooter(options) {
         var _this = this;
         _super.call(this);
-        riot.route(function (hash, filter) {
-            store.setFilter(filter);
-        });
         store.on("update", function () {
-            _this.items = store.getItems(store.data.filter);
+            _this.filter = store.data.filter;
+            _this.num_active = store.getItems('active').length;
+            _this.num_completed = store.getItems('completed').length;
+            _this.word_items = (_this.num_active === 1 ? 'item' : 'items');
+            _this.showFooter = (_this.num_active + _this.num_completed > 0);
+            _this.showClear = (_this.num_completed > 0);
             _this.update();
         });
     }
-    TodoApp.prototype.handleKeyup = function (e) {
-        var inputElement = this["new-todo"];
-        var val = inputElement.value.trim();
-        if (val && e.which === 13) {
-            inputElement.value = ''; // TODO
-            store.addItem(val);
-        }
+    TodoFooter.prototype.handleClearCompleted = function () {
+        store.clearCompleted();
     };
-    TodoApp.prototype.handleToggleAll = function () {
-        store.toggleAll();
-    };
-    TodoApp.prototype.allTasksDone = function () {
-        return store.isDone;
-    };
-    TodoApp = __decorate([
-        template("js/tags/todo-app.html")
-    ], TodoApp);
-    return TodoApp;
+    TodoFooter = __decorate([
+        template("tags/todo-footer.html")
+    ], TodoFooter);
+    return TodoFooter;
 })(Riot.Element);
-//# sourceMappingURL=todo-app.js.map
+//# sourceMappingURL=todo-footer.js.map
