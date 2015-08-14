@@ -33,17 +33,9 @@
     <Content Include="js\tags\todo-item.html" />
     <TypeScriptCompile Include="js\tags\todo-item.ts" />
     <TypeScriptCompile Include="js\tags\todo-app.ts" />
-    <Content Include="test\index.html" />
-    <Content Include="test\models\todo_test.js" />
-    <Content Include="test\presenters\footer_presenter_test.js" />
-    <Content Include="test\presenters\todo_presenter_test.js" />
-    <Content Include="test\test_helper.js" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="README.md" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="test\learn.json" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="web.config" />
