@@ -16,38 +16,27 @@ var TodoApp = (function (_super) {
     function TodoApp(options) {
         var _this = this;
         _super.call(this);
-        // the store
-        this.todo = TodoStore.instance; //= new TodoStore();
-        // filter: "", "active", "completed"
-        this.filterState = null;
         riot.route(function (hash, filter) {
-            _this.todo.trigger('load', filter);
+            store.setFilter(filter);
         });
-        // Reload the list
-        this.todo.on('load', function (filter) { return _this.load(filter); });
-        this.todo.on('add remove toggle', function () { return _this.reload(); });
+        store.on("update", function () {
+            _this.items = store.getItems(store.data.filter);
+            _this.update();
+        });
     }
-    TodoApp.prototype.newtodo_keyup = function (e) {
+    TodoApp.prototype.handleKeyup = function (e) {
         var inputElement = this["new-todo"];
-        var val = $.trim(inputElement.value);
+        var val = inputElement.value.trim();
         if (val && e.which === 13) {
-            inputElement.value = '';
-            this.todo.add(val);
+            inputElement.value = ''; // TODO
+            store.addItem(val);
         }
     };
+    TodoApp.prototype.handleToggleAll = function () {
+        store.toggleAll();
+    };
     TodoApp.prototype.allTasksDone = function () {
-        return this.todo.isDone();
-    };
-    TodoApp.prototype.toggleAll = function () {
-        this.todo.toggleAll();
-    };
-    TodoApp.prototype.load = function (filter) {
-        this.filterState = filter;
-        this.items = this.todo.getItems(this.filterState);
-        this.update();
-    };
-    TodoApp.prototype.reload = function () {
-        this.load(this.filterState);
+        return store.isDone;
     };
     TodoApp = __decorate([
         template("js/tags/todo-app.html")

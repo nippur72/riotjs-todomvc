@@ -1,4 +1,4 @@
-class Task
+interface Task
 {
    id: number;
    name: string;
@@ -6,92 +6,211 @@ class Task
 }
     
 class TodoStore extends Riot.Observable 
-{
-    private static _instance:TodoStore = new TodoStore();
+{    
+   private _data =
+   {
+      items: [],
+      filter: "", 
+      editing_id: 0     
+   }
+   
+   public get data() 
+   { 
+      return this._data; 
+   }
 
-    static get instance() { return TodoStore._instance; };
+   private db = DB('riot-todo');   
 
-    db = DB('riot-todo');
-    items: Array<Task> = this.db.get();
+   constructor()
+   {
+      super();    
+      
+      // connects action to resolvers 
+      this.on("initDb",         ()=>this._initDb());          
+      this.on("setFilter",      (filter)=>this._setFilter(filter));          
+      this.on("addItem",        (name,done)=>this._addItem(name,done));          
+      this.on("startEditItem",  (item)=>this._startEditItem(item));          
+      this.on("endEditItem",    (item)=>this._endEditItem(item));          
+      this.on("cancelEditItem", ()=>this._cancelEditItem());          
+      this.on("removeItem",     (item)=>this._removeItem(item));          
+      this.on("clearCompleted", ()=>this._clearCompleted());          
+      this.on("toggleItem",     (item)=>this._toggleItem(item));          
+      this.on("toggleAll",      ()=>this._toggleAll());          
 
-    constructor()
-    {
-       super();       
+      // sync database
+      this.on("update", ()=> 
+      {
+         this.db.put(this._data.items);
+      });
+   }  
 
-       if(TodoStore._instance!=null) throw "do not use new, use .instance";
+   private update()
+   {
+      this.trigger("update");
+   }
+   
+   // actions 
+   public initDb()
+   {
+      this.trigger("initDb");
+   }
 
-       // sync database
-       this.on('add remove toggle edit', ()=> {
-           this.db.put(this.items);
-       });
-    }
+   public setFilter(filter) 
+   {    
+      this.trigger("setFilter",filter);
+   }
 
-    on(a,b){ return "k"; }    
+   public addItem(name, done?) 
+   {    
+      this.trigger("addItem",name,done);
+   }
 
-    add(name, done?) {
-        var item: Task = {
-          id:   this.generateId(), 
-          name: name, 
-          done: done===undefined?false:done
-        };
+   public startEditItem(id) 
+   {
+      this.trigger("startEditItem", id);         
+   }
 
-        this.items[item.id] = item;
-        this.trigger('add', item);
-    }
+   public endEditItem(item) 
+   {
+      this.trigger("endEditItem", item);         
+   }
 
-    edit(item) {
-        if (!item.name) {
-          return this.remove(item.id);
-        }
+   public cancelEditItem() 
+   {
+      this.trigger("cancelEditItem");         
+   }
 
-        this.items[item.id] = item;
-        this.trigger('edit', item);
-    }
+   public removeItem(item) 
+   {
+      this.trigger("removeItem",item);         
+   }
 
-    remove(filter) {
-        var removedItems = this.getItems(filter).map((item)=> 
-        {
-            delete this.items[item.id];
-            return item;
-        });
-        this.trigger('remove', removedItems);
-    }
+   public toggleItem(item) 
+   {
+      this.trigger("toggleItem",item);         
+   }
 
-    toggle(id) {
-        this.items[id].done = !this.items[id].done;
-        this.trigger('toggle', this.items[id]);
-    }
+   public toggleAll() 
+   {
+      this.trigger("toggleAll");         
+   }
 
-    toggleAll() {
-        var filter = this.isDone() ? 'completed' : 'active';
-        this.getItems(filter).forEach((item)=> 
-        {
-           this.toggle(item.id);
-        });
-    }
+   public clearCompleted() 
+   {
+      this.trigger("clearCompleted");         
+   }
 
-    // @param filter: <empty>, id, 'active', 'completed'
-    getItems(filter) {
-       return Object.keys(this.items).filter((id)=> {
-            return this.matchFilter(this.items[id], filter);
-        }).map((id)=> {
-            return this.items[id];
-        });
-    }
+   // =================== resolvers ===================
 
-    isDone() {
-        return this.getItems('active').length == 0;
-    }
+   private _initDb()
+   {
+      this._data.items = this.db.get();
+      this.update();
+   }
 
-    // Private methods
-    private generateId() {
-        var keys = Object.keys(this.items), i = keys.length;
-        return (i ? this.items[keys[i - 1]].id + 1 : i + 1);
-    }
+   private _setFilter(filter) 
+   {
+      this._data.filter = filter;
+      this.update();          
+   }
 
-    private matchFilter(item, filter) {
-        return !filter ||
-            filter.toString() === item.id.toString() ||
-            filter === (item.done ? 'completed' : 'active');
-    }
+   private _addItem(name, done) 
+   {    
+      var item: Task = 
+      {
+         id:   this.generateId(), 
+         name: name, 
+         done: done === undefined ? false : done
+      }
+
+      this._data.items[item.id] = item;
+      this.update();
+   }   
+
+   private _startEditItem(item) 
+   {
+      this._data.editing_id = item.id;
+      this.update();
+   }
+
+   private _endEditItem(item) 
+   {
+      if(!item.name) 
+      {
+         this._removeItem(item.id);
+         return;
+      }
+      else
+      {
+         this._data.items[item.id] = item;
+      }
+      this._data.editing_id = 0;
+      this.update();
+   }
+
+   private _cancelEditItem() 
+   {
+      this._data.editing_id = 0;
+      this.update();
+   }
+
+   private _removeItem(item) 
+   {
+      delete this._data.items[item.id];
+      this.update();
+   }
+
+   private _clearCompleted() 
+   {
+      this.getItems("completed").map((item)=> 
+      {
+         delete this._data.items[item.id];         
+      });
+
+      this.update();
+   }
+
+   private _toggleItem(id) 
+   {
+      this._data.items[id].done = !this._data.items[id].done;
+      this.update();
+   }
+
+   private _toggleAll() 
+   {
+      var filter = this.isDone ? 'completed' : 'active';
+      this.getItems(filter).forEach((item)=> 
+      {
+         this._data.items[item.id].done = !this._data.items[item.id].done;
+      });
+      this.update();
+   }
+
+   // =============== business logic utils ===============
+   
+   public getItems(filter) 
+   {
+      return Object.keys(this._data.items).filter((id)=> {
+         return this.matchFilter(this._data.items[id], filter);
+      }).map((id)=> {
+         return this._data.items[id];
+      });
+   }
+
+   private matchFilter(item, filter) {
+      return !filter ||
+         filter.toString() === item.id.toString() ||
+         filter === (item.done ? 'completed' : 'active');
+   }
+
+   private generateId() 
+   {
+      var keys = Object.keys(this._data.items), i = keys.length;
+      return (i ? this._data.items[keys[i - 1]].id + 1 : i + 1);
+   }
+
+   get isDone()
+   {
+      return this.getItems('active').length == 0;
+   }    
 }

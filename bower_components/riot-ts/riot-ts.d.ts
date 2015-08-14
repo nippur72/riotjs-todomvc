@@ -42,9 +42,12 @@ declare module Riot {
     }
     class Element implements Riot.Observable, LifeCycle {
         opts: any;
-        parent: any;
+        parent: Element;
         root: HTMLElement;
         tags: any;
+        tagName: string;
+        template: string;
+        isMounted: boolean;
         update(data?: any): void;
         unmount(keepTheParent?: boolean): void;
         on(eventName: string, fun: Function): void;

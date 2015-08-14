@@ -1,14 +1,14 @@
 <todo-item>
    <li id="task_{{item.id}}" class={{completed: item.done, editing: editing}}>
       <div class="view todo-task">
-         <input onclick={{toggleItem}} class="toggle" type="checkbox" checked={{item.done}}>
-         <label ondblclick={{startEdit}}>{{item.name}}</label>
-         <button onclick={{removeItem}} class="destroy"></button>
+         <input onclick={{handleToggleItem}} class="toggle" type="checkbox" checked={{item.done}}>
+         <label ondblclick={{handleStartEdit}}>{{item.name}}</label>
+         <button onclick={{handleRemoveItem}} class="destroy"></button>
       </div>
       <input id="inputfield"              
              value={{item.name}}
-             onblur={{editBlur}}
-             onkeydown={{editkeydown}}
+             onblur={{handleEditBlur}}
+             onkeydown={{handleEditKeydown}}
              class="edit">
    </li>    
 </todo-item>

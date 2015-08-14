@@ -2,10 +2,10 @@
    <footer id="footer" show={{showFooter}}>
       <span id="todo-count"><strong>{{num_active}}</strong> {{word_items}} left</span>
       <ul id="filters">
-         <li><a class={{selected: filterState==''         }} href="#/"         >All</a></li>
-         <li><a class={{selected: filterState=='active'   }} href="#/active"   >Active</a></li>
-         <li><a class={{selected: filterState=='completed'}} href="#/completed">Completed</a></li>
+         <li><a class={{selected: filter==''         }} href="#/"         >All</a></li>
+         <li><a class={{selected: filter=='active'   }} href="#/active"   >Active</a></li>
+         <li><a class={{selected: filter=='completed'}} href="#/completed">Completed</a></li>
       </ul>      
-      <button id="clear-completed" onclick={{clearcompleted}} show={{showClear}}>Clear completed ({{num_completed}})</button>
+      <button id="clear-completed" onclick={{handleClearCompleted}} show={{showClear}}>Clear completed ({{num_completed}})</button>
    </footer>
 </todo-footer>

@@ -1,6 +1,6 @@
 {
   "name": "riot",
-  "version": "2.2.3",
+  "version": "2.2.4",
   "description": "A React- like, 3.5K user interface library",
   "homepage": "https://muut.com/riotjs/",
   "repository": {
@@ -46,13 +46,13 @@
     "!/riot+compiler.min.js"
   ],
   "main": "riot.js",
-  "_release": "2.2.3",
+  "_release": "2.2.4",
   "_resolution": {
     "type": "version",
-    "tag": "v2.2.3",
-    "commit": "11c197e728c9da242cca0e1aa09ba805b748fd88"
+    "tag": "v2.2.4",
+    "commit": "527c9257784f1881389984e97e29eb85ed17a013"
   },
   "_source": "git://github.com/muut/riotjs.git",
-  "_target": "~2.2.2",
+  "_target": "~2.2.3",
   "_originalSource": "riot"
 }

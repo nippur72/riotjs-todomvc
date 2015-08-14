@@ -1,15 +1,8 @@
 @template("js/tags/todo-app.html")
 
 class TodoApp extends Riot.Element
-{
-   // the store
-   todo: TodoStore = TodoStore.instance; //= new TodoStore();
-
-   // array of todo-items to display
-   items: Array<Task>;
-
-   // filter: "", "active", "completed"
-   filterState: string = null;
+{   
+   items: Array<Task>;     
 
    constructor(options)
    {        
@@ -17,44 +10,35 @@ class TodoApp extends Riot.Element
 
       riot.route((hash,filter)=> 
       {                  
-         this.todo.trigger('load', filter);
+         store.setFilter(filter);            
       });     
 
-      // Reload the list
-      this.todo.on('load', (filter)=>this.load(filter));
-      this.todo.on('add remove toggle', ()=>this.reload());                 
+      store.on("update", ()=>
+      {
+         this.items = store.getItems(store.data.filter);          
+         this.update();
+      });
    }
     
-   newtodo_keyup(e)
+   handleKeyup(e)
    {
       var inputElement = this["new-todo"] as HTMLInputElement;
-      var val = $.trim(inputElement.value);
+      var val = inputElement.value.trim();
       if (val && e.which === 13) {
-         inputElement.value = ''; 
-         this.todo.add(val);            
+         inputElement.value = '';  // TODO
+         store.addItem(val);            
       }
    }
   
+   handleToggleAll()
+   {
+      store.toggleAll();
+   }
+
    allTasksDone()
    {               
-      return this.todo.isDone();
-   }
-
-   toggleAll()
-   {
-      this.todo.toggleAll();
-   }
-   
-   load(filter) {
-      this.filterState = filter;
-      this.items = this.todo.getItems(this.filterState);     
-
-      this.update();
-   }
-
-   reload() {
-      this.load(this.filterState);       
-   }    
+      return store.isDone;
+   }   
 }
 
 

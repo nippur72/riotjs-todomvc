@@ -16,25 +16,18 @@ var TodoFooter = (function (_super) {
     function TodoFooter(options) {
         var _this = this;
         _super.call(this);
-        this.filterState = null;
-        this.todo = TodoStore.instance; //options.model;   
-        // Bind model events
-        this.todo.on('load', function (filter) { return _this.load(filter); });
-        this.todo.on('add remove toggle load', function () { return _this.counts(); });
+        store.on("update", function () {
+            _this.filter = store.data.filter;
+            _this.num_active = store.getItems('active').length;
+            _this.num_completed = store.getItems('completed').length;
+            _this.word_items = (_this.num_active === 1 ? 'item' : 'items');
+            _this.showFooter = (_this.num_active + _this.num_completed > 0);
+            _this.showClear = (_this.num_completed > 0);
+            _this.update();
+        });
     }
-    TodoFooter.prototype.load = function (filter) {
-        this.filterState = filter;
-    };
-    TodoFooter.prototype.counts = function () {
-        this.num_active = this.todo.getItems('active').length,
-            this.num_completed = this.todo.getItems('completed').length,
-            this.word_items = (this.num_active === 1 ? 'item' : 'items');
-        this.showFooter = (this.num_active + this.num_completed > 0);
-        this.showClear = (this.num_completed > 0);
-        this.update();
-    };
-    TodoFooter.prototype.clearcompleted = function () {
-        this.todo.remove('completed');
+    TodoFooter.prototype.handleClearCompleted = function () {
+        store.clearCompleted();
     };
     TodoFooter = __decorate([
         template("js/tags/todo-footer.html")

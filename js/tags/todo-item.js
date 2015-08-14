@@ -15,49 +15,42 @@ var ENTER_KEY = 13;
 var ESC_KEY = 27;
 var TodoItem = (function (_super) {
     __extends(TodoItem, _super);
-    function TodoItem(options) {
+    function TodoItem(opts) {
         var _this = this;
         _super.call(this);
-        this.editing = false;
-        this.item = options.item;
-        this.todo = TodoStore.instance; //options.todo;    
-        // Listen to model events      
-        this.todo.on('edit toggle remove', function () { return _this.update(); });
-        this.todo.on('edit', function (item) { return _this.editedItem(item); });
+        this.item = opts.item;
+        store.on("update", function () {
+            _this.item = opts.item;
+            _this.editing = _this.item !== undefined && store.data.editing_id == _this.item.id; // TODO investigate undef
+            _this.update();
+            if (_this.editing)
+                _this["inputfield"].focus();
+        });
     }
-    TodoItem.prototype.removeItem = function (e) {
-        this.todo.remove(this.item.id);
+    TodoItem.prototype.handleRemoveItem = function (e) {
+        store.removeItem(this.item);
     };
-    TodoItem.prototype.startEdit = function () {
-        this.editing = true;
-        this.update();
-        this["inputfield"].focus();
+    TodoItem.prototype.handleStartEdit = function () {
+        store.startEditItem(this.item);
     };
-    TodoItem.prototype.editkeydown = function (e) {
+    TodoItem.prototype.handleEditKeydown = function (e) {
         switch (e.which) {
             case ENTER_KEY:
                 this["inputfield"].blur();
                 break;
             case ESC_KEY:
-                this.editing = false;
-                this.update();
+                store.cancelEditItem();
                 break;
         }
         return true;
     };
-    TodoItem.prototype.editBlur = function () {
+    TodoItem.prototype.handleEditBlur = function () {
         this.editing = false;
-        var val = $.trim(this["inputfield"].value);
-        this.todo.edit({ name: val, id: this.item.id });
+        var val = this["inputfield"].value.trim();
+        store.endEditItem({ name: val, id: this.item.id });
     };
-    TodoItem.prototype.editedItem = function (item) {
-        if (this.item.id == item.id) {
-            this.item = item;
-            this.update();
-        }
-    };
-    TodoItem.prototype.toggleItem = function () {
-        this.todo.toggle(this.item.id);
+    TodoItem.prototype.handleToggleItem = function () {
+        store.toggleItem(this.item.id);
     };
     TodoItem = __decorate([
         template("js/tags/todo-item.html")

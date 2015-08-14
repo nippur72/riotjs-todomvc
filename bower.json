@@ -7,7 +7,6 @@
   "license": "MIT",
   "dependencies": {
     "todomvc-common": "~0.1.9",
-    "jquery": "~2.1.1",
     "riot-ts": "nippur72/RiotTS#~0.0.9"
   }
 }

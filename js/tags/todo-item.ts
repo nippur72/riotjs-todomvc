@@ -4,37 +4,37 @@ const ESC_KEY = 27;
 @template("js/tags/todo-item.html")
 
 class TodoItem extends Riot.Element
-{
-   todo: TodoStore;
+{  
    item;
-
-   editing = false;
+   editing: boolean;
    
-   constructor(options)
+   constructor(opts)
    {
       super();
 
-      this.item = options.item;
-      this.todo = TodoStore.instance; //options.todo;    
+      this.item = opts.item;      
 
-      // Listen to model events      
-      this.todo.on('edit toggle remove', ()=>this.update());        
-      this.todo.on('edit', (item)=>this.editedItem(item) );        
+      store.on("update",()=>
+      {
+         this.item = opts.item;
+         this.editing = this.item !==undefined && store.data.editing_id == this.item.id;  // TODO investigate undef
+         this.update();
+
+         if(this.editing) this["inputfield"].focus();
+      });        
    }
    
-   removeItem(e) 
+   handleRemoveItem(e) 
    {
-      this.todo.remove(this.item.id);
+      store.removeItem(this.item);
    }
       
-   startEdit()
+   handleStartEdit()
    {      
-      this.editing = true;
-      this.update();      
-      this["inputfield"].focus();
+      store.startEditItem(this.item);      
    }
    
-   editkeydown(e: KeyboardEvent)
+   handleEditKeydown(e: KeyboardEvent)
    { 
       switch(e.which) 
       {
@@ -43,32 +43,22 @@ class TodoItem extends Riot.Element
             break;
 
          case ESC_KEY:
-            this.editing = false;
-            this.update();            
+            store.cancelEditItem();     
             break;
       }    
 
       return true;   
    }
   
-   editBlur()
+   handleEditBlur()
    {      
       this.editing = false;
-      var val = $.trim(this["inputfield"].value);      
-      this.todo.edit({ name: val, id: this.item.id });      
-   }
-
-   editedItem(item)
-   {
-      if(this.item.id==item.id)
-      {
-         this.item = item;
-         this.update();
-      }
+      var val = this["inputfield"].value.trim();      
+      store.endEditItem({ name: val, id: this.item.id });      
    }
       
-   toggleItem()
+   handleToggleItem()
    {
-      this.todo.toggle(this.item.id);
+      store.toggleItem(this.item.id);
    }
 }
